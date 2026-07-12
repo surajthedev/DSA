@@ -17,7 +17,7 @@
 
 #  Input: nums = [3,3], target = 6
 #  Output: [0,1]
- 
+
 
 #  Constraints:
 
@@ -40,9 +40,6 @@ class Solution:
                 if nums[i] + nums[j] == target:
                     return [i, j]
 
-
-
-                
 
 
 #  Optimal Solution
