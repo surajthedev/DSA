@@ -35,26 +35,21 @@
 
 
 
-
 # Brute force:
 class Solution:
-    def numDistinct(self, s, t):
+    def numDistinct(self, s: str, t: str) -> int:
         def dfs(i, j):
-            # t completely matched
             if j == len(t):
                 return 1
-
-            # s finished but t is still remaining
             if i == len(s):
                 return 0
 
-            # Current characters match
-            if s[i] == t[j]:
-                # Take s[i] + Skip s[i]
-                return dfs(i + 1, j + 1) + dfs(i + 1, j)
+            ans = dfs(i + 1, j)
 
-            # Characters don't match, so skip s[i]
-            return dfs(i + 1, j)
+            if s[i] == t[j]:
+                ans += dfs(i + 1, j + 1)
+
+            return ans
 
         return dfs(0, 0)
 
@@ -63,18 +58,23 @@ class Solution:
 
 
 
+
+
 # Optimal:
 class Solution:
-    def numDistinct(self, s, t):
-        dp = [0] * (len(t) + 1)
+    def numDistinct(self, s: str, t: str) -> int:
+        m, n = len(s), len(t)
 
-        # Empty t can always be formed in one way
-        dp[0] = 1
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
 
-        for ch in s:
-            for j in range(len(t), 0, -1):
+        for i in range(m + 1):
+            dp[i][0] = 1
 
-                if ch == t[j - 1]:
-                    dp[j] += dp[j - 1]
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                dp[i][j] = dp[i - 1][j]
 
-        return dp[len(t)]
+                if s[i - 1] == t[j - 1]:
+                    dp[i][j] += dp[i - 1][j - 1]
+
+        return dp[m][n]
