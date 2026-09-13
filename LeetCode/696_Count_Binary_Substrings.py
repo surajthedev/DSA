@@ -1,0 +1,80 @@
+# Given a binary string s, return the number of non-empty substrings that have the same number of 0's and 1's, and all the 0's and all the 1's in these substrings are grouped consecutively.
+
+# Substrings that occur multiple times are counted the number of times they occur.
+
+ 
+
+# Example 1:
+
+# Input: s = "00110011"
+# Output: 6
+# Explanation: There are 6 substrings that have equal number of consecutive 1's and 0's: "0011", "01", "1100", "10", "0011", and "01".
+# Notice that some of these substrings repeat and are counted the number of times they occur.
+# Also, "00110011" is not a valid substring because all the 0's (and 1's) are not grouped together.
+# Example 2:
+
+# Input: s = "10101"
+# Output: 4
+# Explanation: There are 4 substrings: "10", "01", "10", "01" that have equal number of consecutive 1's and 0's.
+ 
+
+# Constraints:
+
+# 1 <= s.length <= 105
+# s[i] is either '0' or '1'.
+
+
+
+
+
+
+# Brute Force
+class Solution:
+    def countBinarySubstrings(self, s):
+        n = len(s)
+        ans = 0
+
+        for i in range(n):
+            count0 = 0
+            count1 = 0
+
+            for j in range(i, n):
+                if s[j] == '0':
+                    count0 += 1
+                else:
+                    count1 += 1
+
+                if count0 == count1:
+                    if (
+                        s[i:j + 1].count('0') == count0 and
+                        s[i:j + 1].count('1') == count1
+                    ):
+                        ans += 1
+
+        return ans
+
+
+
+
+
+
+
+
+# Optimal
+class Solution:
+    def countBinarySubstrings(self, s):
+        prev = 0
+        curr = 1
+        ans = 0
+
+        for i in range(1, len(s)):
+            if s[i] == s[i - 1]:
+                curr += 1
+            else:
+                ans += min(prev, curr)
+                prev = curr
+                curr = 1
+
+        ans += min(prev, curr)
+
+        return ans
