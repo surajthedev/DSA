@@ -1,0 +1,93 @@
+# You are given the head of a linked list containing unique integer values and an integer array nums that is a subset of the linked list values.
+
+# Return the number of connected components in nums. A connected component is a non-empty, maximal sequence of consecutive nodes in the linked list such that every node's value belongs to nums.
+
+
+
+# Example 1:
+
+
+# Input: head = [0,1,2,3], nums = [0,1,3]
+# Output: 2
+# Explanation: 0 and 1 are connected, so [0, 1] and [3] are the two connected components.
+# Example 2:
+
+
+# Input: head = [0,1,2,3,4], nums = [0,3,1,4]
+# Output: 2
+# Explanation: 0 and 1 are connected, 3 and 4 are connected, so [0, 1] and [3, 4] are the two connected components.
+
+
+# Constraints:
+
+# The number of nodes in the linked list is n.
+# 1 <= n <= 104
+# 0 <= Node.val < n
+# All the values Node.val are unique.
+# 1 <= nums.length <= n
+# 0 <= nums[i] < n
+# All the values of nums are unique.
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Brute force:
+class Solution:
+    def numComponents(self, head: Optional[ListNode], nums: List[int]) -> int:
+        nums = set(nums)
+        count = 0
+        curr = head
+
+        while curr:
+            if curr.val in nums:
+                found = False
+                temp = head
+
+                while temp != curr:
+                    if temp.val in nums:
+                        found = True
+                    temp = temp.next
+
+                if not found or (curr != head and self.is_prev_not_in_nums(head, curr, nums)):
+                    count += 1
+
+            curr = curr.next
+
+        return count
+
+    def is_prev_not_in_nums(self, head, curr, nums):
+        temp = head
+
+        while temp.next != curr:
+            temp = temp.next
+
+        return temp.val not in nums
+
+
+
+
+
+
+
+
+
+# Optimal:
+class Solution:
+    def numComponents(self, head: Optional[ListNode], nums: List[int]) -> int:
+        nums = set(nums)
+        count = 0
+        curr = head
+
+        while curr:
+            if curr.val in nums:
+                if curr.next is None or curr.next.val not in nums:
+                    count += 1
+
+            curr = curr.next
+
+        return count
