@@ -1,6 +1,6 @@
 # Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
 
- 
+
 
 # Example 1:
 
@@ -10,43 +10,47 @@
 
 # Input: n = 1
 # Output: ["()"]
- 
+
 
 # Constraints:
 
 # 1 <= n <= 8
-
-
-
-# Brute Force:
+#
+#
+#
+#
+#
+#
+# Brute force:
 class Solution:
-    def generateParenthesis(self, n: int):
-        ans = []
+    def generateParenthesis(self, n: int) -> list[str]:
+        result = []
 
-        def isValid(s):
-            count = 0
+        def is_valid(s):
+            balance = 0
+
             for ch in s:
-                if ch == '(':
-                    count += 1
+                if ch == "(":
+                    balance += 1
                 else:
-                    count -= 1
+                    balance -= 1
 
-                if count < 0:
+                if balance < 0:
                     return False
 
-            return count == 0
+            return balance == 0
 
-        def generate(curr):
-            if len(curr) == 2 * n:
-                if isValid(curr):
-                    ans.append(curr)
+        def generate(s):
+            if len(s) == 2 * n:
+                if is_valid(s):
+                    result.append(s)
                 return
 
-            generate(curr + "(")
-            generate(curr + ")")
+            generate(s + "(")
+            generate(s + ")")
 
         generate("")
-        return ans
+        return result
 
 
 
@@ -56,22 +60,28 @@ class Solution:
 
 
 
-# Optimal Approach:
+
+
+
+
+
+
+
+# Optimal:
 class Solution:
-    def generateParenthesis(self, n: int):
-        ans = []
+    def generateParenthesis(self, n: int) -> list[str]:
+        result = []
 
-        def backtrack(curr, openCount, closeCount):
-
-            if len(curr) == 2 * n:
-                ans.append(curr)
+        def backtrack(s, open_count, close_count):
+            if len(s) == 2 * n:
+                result.append(s)
                 return
 
-            if openCount < n:
-                backtrack(curr + "(", openCount + 1, closeCount)
+            if open_count < n:
+                backtrack(s + "(", open_count + 1, close_count)
 
-            if closeCount < openCount:
-                backtrack(curr + ")", openCount, closeCount + 1)
+            if close_count < open_count:
+                backtrack(s + ")", open_count, close_count + 1)
 
         backtrack("", 0, 0)
-        return ans
+        return result
