@@ -6,7 +6,7 @@
 # Any right parenthesis ')' must have a corresponding left parenthesis '('.
 # Left parenthesis '(' must go before the corresponding right parenthesis ')'.
 # '*' could be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string "".
- 
+
 
 # Example 1:
 
@@ -24,24 +24,27 @@
 
 # Input: s = "("
 # Output: false
- 
+
 
 # Constraints:
 
 # 1 <= s.length <= 100
 # s[i] is '(', ')' or '*'.
-
-
-
-
-
-
-
-
-# Brute force:
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Brute Force
 class Solution:
-    def checkValidString(self, s):
-        def dfs(i, balance):
+    def checkValidString(self, s: str) -> bool:
+        def solve(i, balance):
             if balance < 0:
                 return False
 
@@ -49,19 +52,17 @@ class Solution:
                 return balance == 0
 
             if s[i] == '(':
-                return dfs(i + 1, balance + 1)
+                return solve(i + 1, balance + 1)
+            elif s[i] == ')':
+                return solve(i + 1, balance - 1)
+            else:
+                return (
+                    solve(i + 1, balance + 1) or
+                    solve(i + 1, balance - 1) or
+                    solve(i + 1, balance)
+                )
 
-            if s[i] == ')':
-                return dfs(i + 1, balance - 1)
-
-            return (
-                dfs(i + 1, balance + 1) or
-                dfs(i + 1, balance - 1) or
-                dfs(i + 1, balance)
-            )
-
-        return dfs(0, 0)
-
+        return solve(0, 0)
 
 
 
@@ -71,28 +72,27 @@ class Solution:
 
 
 
-# Optimal:
+
+
+
+
+# Optimal - Greedy
 class Solution:
-    def checkValidString(self, s):
-        low = 0
-        high = 0
+    def checkValidString(self, s: str) -> bool:
+        low = high = 0
 
         for ch in s:
             if ch == '(':
                 low += 1
                 high += 1
-
             elif ch == ')':
-                low -= 1
+                low = max(0, low - 1)
                 high -= 1
-
             else:
-                low -= 1
+                low = max(0, low - 1)
                 high += 1
 
             if high < 0:
                 return False
-
-            low = max(low, 0)
 
         return low == 0
