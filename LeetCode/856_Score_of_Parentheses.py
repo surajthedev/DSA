@@ -34,25 +34,37 @@
 #
 #
 #
+#
 # Brute force:
 class Solution:
     def scoreOfParentheses(self, s: str) -> int:
-        stack = [0]
+        def solve(s):
+            if s == "()":
+                return 1
 
-        for ch in s:
-            if ch == '(':
-                stack.append(0)
-            else:
-                value = stack.pop()
+            balance = 0
+            parts = []
+            start = 0
 
-                if value == 0:
-                    value = 1
+            for i, ch in enumerate(s):
+                balance += 1 if ch == '(' else -1
+
+                if balance == 0:
+                    parts.append(s[start:i + 1])
+                    start = i + 1
+
+            ans = 0
+
+            for part in parts:
+                if part == "()":
+                    ans += 1
                 else:
-                    value *= 2
+                    ans += 2 * solve(part[1:-1])
 
-                stack[-1] += value
+            return ans
 
-        return stack[0]
+        return solve(s)
+
 
 
 
@@ -65,16 +77,13 @@ class Solution:
 # Optimal:
 class Solution:
     def scoreOfParentheses(self, s: str) -> int:
-        score = 0
-        depth = 0
+        stack = [0]
 
-        for i, ch in enumerate(s):
+        for ch in s:
             if ch == '(':
-                depth += 1
+                stack.append(0)
             else:
-                depth -= 1
+                inner = stack.pop()
+                stack[-1] += max(2 * inner, 1)
 
-                if s[i - 1] == '(':
-                    score += 2 ** depth
-
-        return score
+        return stack[0]
