@@ -36,64 +36,53 @@
 #
 #
 #
-# Brute force:
+# Brute Force
+from itertools import product
+
 class Solution:
     def minAddToMakeValid(self, s: str) -> int:
         n = len(s)
 
-        def is_valid(s):
-            balance = 0
+        for k in range(n + 1):
+            for additions in product("()", repeat=k):
+                t = list(s)
 
-            for ch in s:
-                if ch == "(":
-                    balance += 1
-                else:
-                    balance -= 1
+                # Try every possible insertion arrangement recursively
+                def valid(i, j, balance):
+                    if balance < 0:
+                        return False
+                    if i == len(t) and j == k:
+                        return balance == 0
 
-                if balance < 0:
+                    if i < len(t) and valid(i + 1, j, balance + (1 if t[i] == '(' else -1)):
+                        return True
+
+                    if j < k:
+                        ch = additions[j]
+                        if valid(i, j + 1, balance + (1 if ch == '(' else -1)):
+                            return True
+
                     return False
 
-            return balance == 0
+                if valid(0, 0, 0):
+                    return k
 
-        def dfs(s):
-            if is_valid(s):
-                return 0
-
-            ans = float("inf")
-
-            for i in range(len(s) + 1):
-                ans = min(ans, 1 + dfs(s[:i] + "(" + s[i:]))
-                ans = min(ans, 1 + dfs(s[:i] + ")" + s[i:]))
-
-            return ans
-
-        return dfs(s)
+        return n
 
 
-
-
-
-
-
-
-
-
-
-
-# Optimal:
+# Optimal - O(n) Time, O(1) Space
 class Solution:
     def minAddToMakeValid(self, s: str) -> int:
         balance = 0
-        additions = 0
+        ans = 0
 
         for ch in s:
-            if ch == "(":
+            if ch == '(':
                 balance += 1
             else:
                 if balance > 0:
                     balance -= 1
                 else:
-                    additions += 1
+                    ans += 1
 
-        # Remaining '(' need closing ')'
-        return additions + balance
+        return ans + balance
